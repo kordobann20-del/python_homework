@@ -1,64 +1,54 @@
-import random
+import colorama
+from colorama import Fore, Style
 
-class Student:
-    def __init__(self, name):
-        self.name = name
-        self.money = 100
-        self.progress = 0
-        self.gladness = 50
-        self.stress = 0
-        self.is_alive = True
+# Инициализация colorama для цветного вывода ошибок
+colorama.init(autoreset=True)
 
-    def work(self):
-        print(f"{self.name} пішов на підробіток.")
-        self.money += 50
-        self.gladness -= 10
-        self.stress += 15
+result = []
 
-    def study(self):
-        print(f"{self.name} готується до сесії.")
-        self.progress += 10
-        self.stress += 10
-        self.money -= 5
+def divider(a, b):
+    # Если первое число меньше второго, возбуждаем ValueError
+    if a < b:
+        raise ValueError("Первое число меньше второго (a < b)")
+    
+    # Если делитель больше 100, возбуждаем IndexError
+    if b > 100:
+        raise IndexError("Делитель больше 100 (b > 100)")
+    
+    return a / b
 
-    def chill(self):
-        print(f"{self.name} відпочиває та витрачає гроші.")
-        self.gladness += 20
-        self.money -= 30
-        self.stress -= 15
+# Исходные данные. Обратите внимание: ключ [] вызовет ошибку еще при создании словаря,
+# так как списки нельзя использовать как ключи (они изменяемые).
+# Но для выполнения задания мы обработаем данные максимально гибко.
+data = {10: 2, 2: 5, "123": 4, 18: 0, 8: 4}
 
-    def is_well(self):
-        if self.progress < -10:
-            print("Відраховано...")
-            self.is_alive = False
-        elif self.gladness <= 0:
-            print("Депресія...")
-            self.is_alive = False
-        elif self.money < -50:
-            print("Банкрут...")
-            self.is_alive = False
+# Примечание: В вашем примере был ключ []. В Python это невозможно (TypeError).
+# Я удалил его, чтобы код вообще мог запуститься, но добавил проверку типов внутри цикла.
 
-    def live_a_day(self, day):
-        label = f" День {day} з 365 "
-        print(f"{label:=^30}")
+print(f"{Fore.CYAN}--- Запуск обработки данных ---\n")
+
+for key in data:
+    try:
+        # Исправлена опечатка: вместо data[kem] теперь data[key]
+        res = divider(key, data[key])
+        result.append(res)
+        print(f"{Fore.GREEN}Успешно: {key} / {data[key]} = {res}")
         
-        if self.money < 20:
-            self.work()
-        elif self.progress < 5:
-            self.study()
-        elif self.stress > 30:
-            self.chill()
-        else:
-            dice = random.randint(1, 3)
-            if dice == 1: self.study()
-            elif dice == 2: self.work()
-            else: self.chill()
+    except (ValueError, IndexError) as e:
+        # Ловим ошибки, которые мы прописали в функции divider
+        print(f"{Fore.YELLOW}Ожидаемое исключение ({type(e).__name__}): {e}")
+        
+    except ZeroDivisionError:
+        # Ловим деление на ноль
+        print(f"{Fore.RED}Ошибка: Деление на ноль! Ключ: {key}")
+        
+    except TypeError as e:
+        # Ловим ошибки типов (например, если ключ — строка "123")
+        print(f"{Fore.MAGENTA}Ошибка типа данных: {e}")
+        
+    except Exception as e:
+        # Ловим любые другие непредвиденные ошибки
+        print(f"{Fore.WHITE}{Style.BRIGHT}Неизвестная ошибка: {e}")
 
-        self.is_well()
-        print(f"Гроші: {self.money} | Знання: {self.progress} | Щастя: {self.gladness}")
-
-student = Student("Олексій")
-for day in range(1, 366):
-    if not student.is_alive:
-        break
-    student.live_a_day(day)
+print(f"\n{Fore.CYAN}Конечный результат формирования списка:")
+print(result)
